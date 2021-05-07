@@ -11,12 +11,12 @@ type UserMgr struct {
 }
 
 var UserList map[string]*Connection
-var UserRow map[string]*common.UserRow
+var UserRowData map[string]*common.UserRow
 var UserAcciSet mapset.Set
 
 func init() {
 	UserList = make(map[string]*Connection)
-	UserRow = make(map[string]*common.UserRow)
+	UserRowData = make(map[string]*common.UserRow)
 	UserAcciSet = mapset.NewSet()
 
 	var accidRow UserMgr
@@ -35,7 +35,7 @@ func init() {
 }
 
 func GetRowById(Accid string) (row *common.UserRow, err error) {
-	if row, ok := UserRow[Accid]; ok {
+	if row, ok := UserRowData[Accid]; ok {
 		return row, err
 	}
 	if UserAcciSet.Contains(Accid) {
@@ -48,7 +48,7 @@ func GetRowById(Accid string) (row *common.UserRow, err error) {
 		}
 		UserAcciSet.Add(Accid)
 	}
-	UserRow[Accid] = row
+	UserRowData[Accid] = row
 	return row, err
 }
 

@@ -17,9 +17,8 @@ var roomList map[int]room
 var maxroomid int
 
 type roomessage struct {
-	Key    float64
-	Data   map[int]room
-	Sucess bool
+	Key  float64
+	Data map[int]room
 }
 
 type joinroom struct {
@@ -62,8 +61,9 @@ func (*roomessage) roomessage(conn *user.Connection, param map[string]interface{
 
 func (*joinroom) joinroom(conn *user.Connection, param map[string]interface{}) {
 	var (
-		err error
-		ans roomessage
+		err  error
+		ans  roomessage
+		urow *common.UserRow
 	)
 
 	ans.Key = common.S2Cjoinroom
@@ -71,8 +71,8 @@ func (*joinroom) joinroom(conn *user.Connection, param map[string]interface{}) {
 	roomid := param["roomid"].(int)
 	roomS := roomList[roomid]
 	if reflect.ValueOf(roomS.left).IsZero() { // 没人
-		ans.Sucess = true
 		roomS.left = conn.Accid
+
 		if roomid == maxroomid && roomid < 5008 { // 由于本人前端水平 就只开8个房间
 			for i := 0; i < 2; i++ { // 生成2个空房间
 				var roomNew room
@@ -84,15 +84,25 @@ func (*joinroom) joinroom(conn *user.Connection, param map[string]interface{}) {
 			}
 		}
 	} else if reflect.ValueOf(roomS.right).IsZero() { // 有一个
-		ans.Sucess = true
+
 		roomS.right = conn.Accid
 		// start game
 	} else { // 人满
-		ans.Sucess = false
+		conn.ResultMsg(common.RoomEnoughErr, common.RoomEnoughErrMsg)
+		return
 	}
 
 	roomList[roomid] = roomS
 	ans.Data = roomList
+	if urow, err = user.GetRowById(conn.Accid); err != nil {
+		panic(err.Error())
+	}
+	// uplist := *urow
+	// uplist.GameMsg.Roomid = roomid
+	// *urow = uplist
+
+	urow.GameMsg.Roomid = roomid
+	user.UserRowData[conn.Accid] = urow
 
 	if err = conn.Send(ans); err != nil {
 		panic(err.Error())

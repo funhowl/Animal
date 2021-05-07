@@ -50,7 +50,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	// go func() {
 
 	// 	for {
-	// 		user.RegisterEvent(common.GAME_RUN, new(common.GAME_RUN_EVENT).GAME_RUN) // 登录请求
+	// 		user.RegisterEvent(common.GAME_RUN, new(common.GAME_RUN_EVENT).GAME_RUN) // 帧事件
 	// 		time.Sleep(100 * time.Second)
 	// 	}
 	// }()

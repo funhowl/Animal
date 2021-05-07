@@ -22,6 +22,9 @@ const (
 	ClientConflictMsg = "账号异地登录"
 	LoginErr          = 9001
 	LoginErrMsg       = "登录异常"
+
+	RoomEnoughErr    = 9002
+	RoomEnoughErrMsg = "房间已满"
 )
 
 type Userinfo struct {
@@ -35,9 +38,14 @@ type TaskRow struct {
 	Uct   interface{}
 }
 
+type GameRow struct {
+	Roomid int //房间号
+}
+
 type UserRow struct {
 	Accid    string
 	Gold     int
 	Userinfo *Userinfo
 	Tasks    *TaskRow
+	GameMsg  *GameRow // game 模块相关的信息 只保存 不更新入数据库
 }
