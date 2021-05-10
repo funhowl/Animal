@@ -8,6 +8,7 @@ import (
 	"Animal/common"
 	"Animal/user"
 
+	_ "Animal/game"
 	_ "Animal/scene"
 
 	"github.com/gorilla/websocket"

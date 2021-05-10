@@ -29,17 +29,22 @@ func init() {
 
 func (*login) login(conn *user.Connection, param map[string]interface{}) {
 
-	fmt.Println("callback:", param)
 	var (
 		err     error
 		ans     login
 		oldconn *user.Connection
 		urow    *common.UserRow
 		uct     Data
-		ss      *common.UserRow
+		updata  *common.UserRow
+		Accid   string
 	)
 
-	Accid := param["code"].(string) //现在都是第三方登录 应该写个登录服务器 这个accid 还有个token 是前端从登录服务器请求来的 还要验证一下 这里就随便写
+	if acc, ok := param["code"]; ok { //现在都是第三方登录 应该写个登录服务器 这个accid 还有个token 是前端从登录服务器请求来的 还要验证一下 这里就随便写
+		Accid = acc.(string)
+	} else {
+		conn.ResultMsg(common.MessageParamsErr, common.MessageParamsErrMsg)
+		return
+	}
 
 	if oldconn, err = user.GetUser(Accid); err != nil {
 		panic(err.Error())
@@ -58,6 +63,7 @@ func (*login) login(conn *user.Connection, param map[string]interface{}) {
 	ans.Sucess = true
 	ans.Now = time.Now()
 
+	//test UpdateUsersDB
 	if urow, err = user.GetRowById(Accid); err != nil {
 		panic(err.Error())
 	}
@@ -77,10 +83,10 @@ func (*login) login(conn *user.Connection, param map[string]interface{}) {
 	uplist.Gold = 10
 	uplist.Tasks = &uptask
 
-	if ss, err = common.UpdateUsersDB(urow, uplist); err != nil {
+	if updata, err = common.UpdateUsersDB(urow, uplist); err != nil {
 		panic(err.Error())
 	}
-	fmt.Println(ss)
+	fmt.Println(updata)
 
 	if err = conn.Send(ans); err != nil {
 		panic(err.Error())

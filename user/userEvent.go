@@ -1,5 +1,7 @@
 package user
 
+import "fmt"
+
 // 实例化一个通过字符串映射函数切片的map
 var eventByName = make(map[float64][]func(*Connection, map[string]interface{}))
 
@@ -26,6 +28,7 @@ func CallEvent(name float64, conn *Connection, param map[string]interface{}) {
 	for _, callback := range list {
 
 		// 传入参数调用回调
+		fmt.Println("callback:", param)
 		callback(conn, param)
 	}
 }

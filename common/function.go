@@ -2,11 +2,18 @@ package common
 
 import (
 	"encoding/json"
+	"math/rand"
 	"net"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
+
+func IntnBytime(number int) int {
+	rand.Seed(time.Now().Unix())
+	return rand.Intn(1)
+}
 
 func ClientIP(r *http.Request) string {
 	xForwardedFor := r.Header.Get("X-Forwarded-For")

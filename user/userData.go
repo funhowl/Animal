@@ -64,3 +64,13 @@ func GetUser(Accid string) (conn *Connection, err error) {
 	UserList[Accid] = conn
 	return conn, err
 }
+
+func Send(Accid string, it interface{}) (conn *Connection, err error) {
+	if conn, err = GetUser(Accid); err != nil {
+		panic(err.Error())
+	}
+	if err = conn.Send(it); err != nil {
+		panic(err.Error())
+	}
+	return
+}
