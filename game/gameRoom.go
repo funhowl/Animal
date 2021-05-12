@@ -3,15 +3,16 @@ package game
 import (
 	"Animal/common"
 	"Animal/user"
+	"encoding/json"
 	"fmt"
 	"reflect"
 )
 
 type room struct {
-	roomid int
+	Roomid int
 	// count int
-	left  string // room 里面最多两个玩家 就直接用两个字段
-	right string
+	Left  string // room 里面最多两个玩家 就直接用两个字段
+	Right string
 }
 
 var roomList map[int]*room
@@ -22,47 +23,43 @@ type roomessage struct {
 	Data interface{}
 }
 
-type joinroom struct {
-	Key  float64
-	Data interface{}
-}
-
 func init() {
 
 	roomList = make(map[int]*room)
 	roomid := 5000
 
-	for i := 0; i < 4; i++ { // 先 生成4个空房间
+	for i := 0; i < 6; i++ { // 先 生成6个空房间
 		var roomNew room
-		roomNew.roomid = roomid + i + 1
-		roomNew.left = "wo shi "
-		roomList[roomNew.roomid] = &roomNew
-		if roomNew.roomid > maxroomid {
-			maxroomid = roomNew.roomid
+		roomNew.Roomid = roomid + i + 1
+		roomList[roomNew.Roomid] = &roomNew
+		if roomNew.Roomid > maxroomid {
+			maxroomid = roomNew.Roomid
 		}
 	}
 
 	user.RegisterEvent(common.C2Sroomessage, new(roomessage).roomessage) // 房间信息请求
-	user.RegisterEvent(common.C2Sjoinroom, new(joinroom).joinroom)       //  加入房间请求
+	user.RegisterEvent(common.C2Sjoinroom, new(roomessage).joinroom)     //  加入房间请求
 }
 
 func (*roomessage) roomessage(conn *user.Connection, param map[string]interface{}) {
 
 	var (
 		err error
-		ans joinroom
+		ans roomessage
 	)
 
 	ans.Key = common.S2Croomessage
+	fmt.Println("roomList:", roomList[5001].Roomid)
+	a, _ := json.Marshal(roomList)
+	fmt.Println("string(a):", string(a))
 	ans.Data = roomList
-	fmt.Print("ans:", ans)
 
 	if err = conn.Send(ans); err != nil {
 		panic(err.Error())
 	}
 }
 
-func (*joinroom) joinroom(conn *user.Connection, param map[string]interface{}) {
+func (*roomessage) joinroom(conn *user.Connection, param map[string]interface{}) {
 	var (
 		err        error
 		ans        roomessage
@@ -73,31 +70,32 @@ func (*joinroom) joinroom(conn *user.Connection, param map[string]interface{}) {
 	if urow, err = user.GetRowById(conn.Accid); err != nil {
 		panic(err.Error())
 	}
-	if urow.GameMsg.Roomid > 5000 {
+
+	if !reflect.ValueOf(urow.GameMsg).IsZero() && urow.GameMsg.Roomid > 5000 {
 		conn.ResultMsg(common.RoomRepeatErr, common.RoomRepeatErrMsg)
 		return
 	}
 
-	ans.Key = common.S2Cjoinroom
+	ans.Key = common.S2Croomessage
 
-	roomid := param["roomid"].(int)
+	roomid := int(param["Roomid"].(float64))
 	roomS := roomList[roomid]
-	if reflect.ValueOf(roomS.left).IsZero() { // 没人
-		roomS.left = conn.Accid
+	if reflect.ValueOf(roomS.Left).IsZero() { // 没人
+		roomS.Left = conn.Accid
 
-		if roomid == maxroomid && roomid < 5008 { // 由于本人前端水平 就只开8个房间
+		if roomid == maxroomid && roomid < 5009 { // 由于本人前端水平 就只开10个房间
 			for i := 0; i < 2; i++ { // 生成2个空房间
-				var roomNew *room
-				roomNew.roomid = roomid + i + 1
-				roomList[roomNew.roomid] = roomNew
-				if roomNew.roomid > maxroomid {
-					maxroomid = roomNew.roomid
+				var roomNew room
+				roomNew.Roomid = roomid + i + 1
+				roomList[roomNew.Roomid] = &roomNew
+				if roomNew.Roomid > maxroomid {
+					maxroomid = roomNew.Roomid
 				}
 			}
 		}
-	} else if reflect.ValueOf(roomS.right).IsZero() { // 有一个
+	} else if reflect.ValueOf(roomS.Right).IsZero() { // 有一个
 
-		roomS.right = conn.Accid
+		roomS.Right = conn.Accid
 		// start game
 		istartgame = true
 		// left := roomS.left
@@ -114,9 +112,11 @@ func (*joinroom) joinroom(conn *user.Connection, param map[string]interface{}) {
 	// uplist.GameMsg.Roomid = roomid
 	// *urow = uplist
 
-	urow.GameMsg.Roomid = roomid
-	urow.GameMsg.Left = roomS.left
-	urow.GameMsg.Right = roomS.right
+	var GameMsg common.GameRow
+	GameMsg.Roomid = roomid
+	GameMsg.Left = roomS.Left
+	GameMsg.Right = roomS.Right
+	urow.GameMsg = &GameMsg
 	user.UserRowData[conn.Accid] = urow
 
 	if err = conn.Send(ans); err != nil {

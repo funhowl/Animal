@@ -67,9 +67,12 @@ func (conn *Connection) WriteMessage(data []byte) (err error) {
 }
 
 func (conn *Connection) Send(it interface{}) (err error) {
-	str, _ := json.Marshal(it)
-	data := []byte(str)
-	return conn.WriteMessage(data)
+	if !conn.isClosed {
+		str, _ := json.Marshal(it)
+		data := []byte(str)
+		return conn.WriteMessage(data)
+	}
+	return
 }
 
 func (conn *Connection) ResultMsg(result float64, info string) (err error) {

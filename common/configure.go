@@ -18,8 +18,8 @@ const (
 	C2Sjoinroom = 1004 // 加入房间请求
 	S2Cjoinroom = 1005
 
-	C2Sgamestart = 1006 // 游戏开始请求
-	S2Cgamestart = 1007 // 游戏开始通知
+	// C2Sgamestart = 1006 // 游戏开始请求
+	// S2Cgamestart = 1007 // 游戏开始通知
 
 	C2Sgamemsg = 1008 // 游戏信息请求
 	S2Cgamemsg = 1009
