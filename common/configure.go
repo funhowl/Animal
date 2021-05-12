@@ -18,8 +18,8 @@ const (
 	C2Sjoinroom = 1004 // 加入房间请求
 	S2Cjoinroom = 1005
 
-	// C2Sgamestart = 1006 // 游戏开始请求
-	// S2Cgamestart = 1007 // 游戏开始通知
+	C2Sgamechange = 1006 // 游戏棋子移动请求
+	// S2Cgamechange = 1007
 
 	C2Sgamemsg = 1008 // 游戏信息请求
 	S2Cgamemsg = 1009
@@ -35,8 +35,11 @@ const (
 	RoomRepeatErr    = 9003
 	RoomRepeatErrMsg = "已经在房间里"
 
-	MessageParamsErr    = 9003
+	MessageParamsErr    = 9004
 	MessageParamsErrMsg = "参数错误"
+
+	GameTurnErr    = 9005
+	GameTurnErrMsg = "不是你的回合"
 )
 
 type Userinfo struct {
