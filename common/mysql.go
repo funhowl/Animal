@@ -107,8 +107,8 @@ func InitUserRow(Accid string) (*UserRow, error) {
 
 func initTaskRow() (ans *TaskRow, err error) {
 	ans = &TaskRow{
-		Str:   "过尽千帆皆不是",
-		Point: 1000,
+		Record: "",
+		Point:  1000,
 	}
 	return
 }

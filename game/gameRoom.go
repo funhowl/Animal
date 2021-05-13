@@ -117,12 +117,16 @@ func (*roomessage) joinroom(conn *user.Connection, param map[string]interface{})
 	GameMsg.Left = roomS.Left
 	GameMsg.Right = roomS.Right
 	urow.GameMsg = &GameMsg
+
 	user.UserRowData[conn.Accid] = urow
 
 	if err = conn.Send(ans); err != nil {
 		panic(err.Error())
 	}
 	if istartgame {
+		urowL := user.UserRowData[roomS.Left]
+		urowL.GameMsg = &GameMsg
+		user.UserRowData[roomS.Left] = urowL
 		startgame(roomS)
 	}
 }

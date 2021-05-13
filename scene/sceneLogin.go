@@ -63,16 +63,16 @@ func (*login) login(conn *user.Connection, param map[string]interface{}) {
 	ans.Sucess = true
 	ans.Now = time.Now()
 
-	//test UpdateUsersDB
 	if urow, err = user.GetRowById(Accid); err != nil {
 		panic(err.Error())
 	}
 	ans.Data = urow
 
+	//test UpdateUsersDB
 	uplist := *urow
 
 	uptask := *(uplist.Tasks)
-	uptask.Str = "材不材间过此生"
+	uptask.Record = "材不材间过此生"
 	uptask.Point = uptask.Point + 1
 
 	uct.Key = 110
