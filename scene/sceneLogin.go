@@ -68,7 +68,7 @@ func (*login) login(conn *user.Connection, param map[string]interface{}) {
 	}
 	ans.Data = urow
 
-	//test UpdateUsersDB
+	//测试 UpdateUsersDB 这个方法
 	uplist := *urow
 
 	uptask := *(uplist.Tasks)
@@ -86,7 +86,7 @@ func (*login) login(conn *user.Connection, param map[string]interface{}) {
 	if updata, err = common.UpdateUsersDB(urow, uplist); err != nil {
 		panic(err.Error())
 	}
-	fmt.Println(updata) // test
+	fmt.Println(updata) // test UpdateUsersDB
 
 	if err = conn.Send(ans); err != nil {
 		panic(err.Error())
