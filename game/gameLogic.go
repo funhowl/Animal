@@ -126,21 +126,21 @@ func (*roomessage) gamechange(conn *user.Connection, param map[string]interface{
 		}
 		end = findEndofMove(chess, start, 9)
 	}
-	boolean := valueByChessid(chess, start) > valueByChessid(chess, end)  // 吃法判定
+	canEat := valueByChessid(chess, start) >= valueByChessid(chess, end)  // 吃法判定
 	if chess[end]%100 > 0 && (chess[start]%100/10 == chess[end]%100/10) { // 自己不能吃自己的牌
 		conn.ResultMsg(common.MessageParamsErr, common.MessageParamsErrMsg)
 		return
 	}
 
-	if valueByChessid(chess, start) == 2 && valueByChessid(chess, end) == 9 { // 老鼠不在水中可以吃象
+	if canEat && valueByChessid(chess, start) == 2 { // 老鼠在水中不可以吃
 		if checkByChessid(chess, start) != 1 {
-			boolean = true
+			canEat = true
 		}
 	}
 	if valueByChessid(chess, start) == 9 && valueByChessid(chess, end) == 2 { // 象不可以吃老鼠
-		boolean = false
+		canEat = false
 	}
-	if !boolean {
+	if !canEat {
 		conn.ResultMsg(common.MessageParamsErr, common.MessageParamsErrMsg)
 		return
 	}
