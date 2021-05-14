@@ -121,7 +121,7 @@ func initInfoRow() (ans *Userinfo, err error) {
 	return
 }
 
-func UpdateUsersDB(urow *UserRow, data UserRow) (*UserRow, error) {
+func UpdateUsersDB(urow *UserRow, data UserRow) (*UserRow, error) { // 更新urow至数据库
 
 	var (
 		err     error

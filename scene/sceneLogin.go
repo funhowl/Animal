@@ -78,15 +78,15 @@ func (*login) login(conn *user.Connection, param map[string]interface{}) {
 	uct.Key = 110
 	uct.Sucess = true
 	uct.Now = time.Now()
-	uptask.Uct = uct
+	uptask.Uct = uct // 写个 interface{} 测试一下
 
-	uplist.Gold = 10
+	uplist.Gold = uplist.Gold + 10
 	uplist.Tasks = &uptask
 
 	if updata, err = common.UpdateUsersDB(urow, uplist); err != nil {
 		panic(err.Error())
 	}
-	fmt.Println(updata)
+	fmt.Println(updata) // test
 
 	if err = conn.Send(ans); err != nil {
 		panic(err.Error())
