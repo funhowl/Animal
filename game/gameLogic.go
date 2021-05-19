@@ -132,7 +132,7 @@ func (*roomessage) gamechange(conn *user.Connection, param map[string]interface{
 		return
 	}
 
-	if canEat && valueByChessid(chess, start) == 2 { // 老鼠在水中不可以吃
+	if valueByChessid(chess, start) == 2 && valueByChessid(chess, end) == 9 { // 老鼠在水中不可以吃
 		if checkByChessid(chess, start) != 1 {
 			canEat = true
 		}
